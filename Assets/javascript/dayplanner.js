@@ -1,7 +1,5 @@
 $(document).ready(function () {
-
-    // var agenda = []
-    // var blockHour = ""
+    var agenda = ""
 
     // Gets current time to display on web page
     var currentTime = function () {
@@ -15,51 +13,76 @@ $(document).ready(function () {
         var currentHour = moment().hours();
         $('.time-block').each(function () {
             var blockHour = parseInt($(this).attr("data-hour"))
-            console.log(blockHour);
-            console.log(currentHour);
 
             if (blockHour < currentHour) {
                 $(this).addClass("past");
-                console.log("Past");
             }
+
             else if (blockHour > currentHour) {
                 $(this).addClass("future");
-                console.log("Future");
 
             }
+
             else {
                 $(this).addClass("present");
-                console.log("Present");
             }
-            console.log(this)
-            // setInterval(hoursUpdater, 60000)
 
         })
     }
-    // setInterval(hoursUpdater, 10000)
+    setInterval(hoursUpdater, 10000)
 
+    //saves agenda items to local storage as object with hour and task key values
     function saveAgenda() {
-        var agenda = []
+        agenda = []
         $('.description').each(function () {
             var hour = $(this).attr("data-task")
             var task = $.trim($(this).val())
-            if (task != '') {
-                // agenda = JSON.parse(localStorage.getItem('item:'))
 
-                agenda.push({
-                    hour: hour,
-                    task: task,
-                })
+            agenda.push({
+                hour: hour,
+                task: task,
+            })
 
-                localStorage.setItem('agendas:', JSON.stringify(agenda))
+            var setagenda = localStorage.setItem('agendaItems', JSON.stringify(agenda))
 
-            }
         })
 
     }
+
+    //retrieves agenda items from local storage
+    function loadAgenda() {
+        i = 0
+        $('.description').each(function () {
+            var readagenda = JSON.parse(localStorage.getItem('agendaItems'))
+            var hour = $(this).attr("data-task")
+
+            if (readagenda[i].hour === hour) {
+                $(this).val(readagenda[i].task)
+            }
+
+            else {
+                return ""
+            }
+
+            i++
+        })
+    }
+
+
+    // function clearStorage() {
+    //     if(){
+    //         localStorage.clear()
+    //     }
+
+    // }
+
+
 
 
     $(".saveBtn").click(saveAgenda)
 
     hoursUpdater()
-})
+    loadAgenda()
+
+    console.log("executed")
+});
